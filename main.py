@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import pathlib
 
 from pdf2image import convert_from_path

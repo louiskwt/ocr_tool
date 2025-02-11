@@ -1,32 +1,9 @@
-<<<<<<< HEAD
-import pathlib
-
-from pdf2image import convert_from_path
-
-
-# Converting pdf to img first
-def convert_pdf_to_img(path):
-    CURRENT_DIR = pathlib.Path(__file__).parent.absolute()
-    pdfs = CURRENT_DIR / "test_files" / path
-    pages = convert_from_path(pdfs, 500)
-    num_of_pages = len(pages)
-    for i in range(num_of_pages):
-        img_name = f"test{i + 1}.jpg"
-        pages[i].save(img_name, "JPEG")
-
-def main():
-    convert_pdf_to_img("test.pdf")
-
-
-if __name__ == "__main__":
-    main()
-
-import os
+import os, csv
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path) -> str:
     pages = convert_from_path(pdf_path)
     text = ""
     
@@ -38,6 +15,20 @@ def extract_text_from_pdf(pdf_path):
 
     return text
 
-pdf = "test2.pdf"
+def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
+    splited_words = [word.lower() for word in text.split() if len(word) > 2 and not word.isupper() and word.isalpha()]
+    return list(dict.fromkeys(splited_words))
+
+def save_words_into_csv(words: list[str], year: str) -> None:
+    with open(f'{year}.csv', 'w') as f:
+        header = ["Word", "pos", "year"]
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for w in words:
+            writer.writerow([w, "", year])
+
+
+pdf = "2012.pdf"
 extracted_text = extract_text_from_pdf(pdf)
-print(extracted_text)
+words = parse_and_format_words_from_extracted_text(extracted_text)
+save_words_into_csv(words, "2012")

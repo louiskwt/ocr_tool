@@ -1,7 +1,6 @@
-import os, csv
+import os, csv, pytesseract, enchant
 from pdf2image import convert_from_path
 from PIL import Image
-import pytesseract
 
 stopwords = [
     "a", "an", "the", "and", "or", "but", "if", "because", "as", "until", "while",
@@ -19,20 +18,23 @@ stopwords = [
     "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
     "can", "could", "may", "might", "must", "ought"]
 
+
+def validate_word(word):
+    us_dict = enchant.Dict("en_US")
+    return us_dict.check(word)
+
 def extract_text_from_pdf(pdf_path) -> str:
     pages = convert_from_path(pdf_path)
     text = ""
-    
     for i, page in enumerate(pages):
         tmp_image = f'page_{i}.jpg'
         page.save(tmp_image, 'JPEG')
         text += pytesseract.image_to_string(Image.open(tmp_image))
         os.remove(tmp_image)
-
     return text
 
 def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
-    splited_words = [word.lower() for word in text.split() if len(word) > 2 and not word.isupper() and word not in stopwords and word.isalpha()]
+    splited_words = [word.lower() for word in text.split() if len(word) > 2 and not word.isupper() and word not in stopwords and validate_word(word)]
     return list(dict.fromkeys(splited_words))
 
 def save_words_into_csv(words: list[str], year: str) -> None:

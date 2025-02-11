@@ -2,9 +2,7 @@ import os, csv, pytesseract, enchant
 from pdf2image import convert_from_path
 from PIL import Image
 
-
-
-def validate_word(word):
+def validate_word(word: str) -> bool:
     if len(word) < 2:
         return False
     if word.isupper():
@@ -27,7 +25,7 @@ def validate_word(word):
     us_dict = enchant.Dict("en_US")
     return us_dict.check(word) and word.lower() not in stopwords
 
-def extract_text_from_pdf(pdf_path) -> str:
+def extract_text_from_pdf(pdf_path: str) -> str:
     pages = convert_from_path(pdf_path)
     text = ""
     for i, page in enumerate(pages):

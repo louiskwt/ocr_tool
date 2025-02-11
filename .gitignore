@@ -1,8 +1,4 @@
 myenv
 *.pdf
 .venv
-test_files
-tesseract
-*.jpg
-*.pdf
-.csv
+*.csv

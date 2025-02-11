@@ -1,3 +1,5 @@
+myenv
+*.pdf
 .venv
 test_files
 tesseract

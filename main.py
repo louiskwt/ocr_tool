@@ -20,3 +20,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import os
+from pdf2image import convert_from_path
+from PIL import Image
+import pytesseract
+
+def extract_text_from_pdf(pdf_path):
+    pages = convert_from_path(pdf_path)
+    text = ""
+    
+    for i, page in enumerate(pages):
+        tmp_image = f'page_{i}.jpg'
+        page.save(tmp_image, 'JPEG')
+        text += pytesseract.image_to_string(Image.open(tmp_image))
+        os.remove(tmp_image)
+
+    return text
+
+pdf = "test2.pdf"
+extracted_text = extract_text_from_pdf(pdf)
+print(extracted_text)

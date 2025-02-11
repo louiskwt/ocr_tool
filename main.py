@@ -2,26 +2,30 @@ import os, csv, pytesseract, enchant
 from pdf2image import convert_from_path
 from PIL import Image
 
-stopwords = [
-    "a", "an", "the", "and", "or", "but", "if", "because", "as", "until", "while",
-    "of", "at", "by", "for", "with", "about", "against", "between", "into", "through",
-    "during", "before", "after", "above", "below", "to", "from", "up", "down", "in",
-    "out", "on", "off", "over", "under", "again", "further", "then", "once",
-    "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
-    "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own",
-    "same", "so", "than", "too", "very",
-    "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
-    "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her",
-    "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs",
-    "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
-    "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
-    "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
-    "can", "could", "may", "might", "must", "ought"]
 
 
 def validate_word(word):
+    if len(word) < 2:
+        return False
+    if word.isupper():
+        return False
+    stopwords = [
+        "a", "an", "the", "and", "or", "but", "if", "because", "as", "until", "while",
+        "of", "at", "by", "for", "with", "about", "against", "between", "into", "through",
+        "during", "before", "after", "above", "below", "to", "from", "up", "down", "in",
+        "out", "on", "off", "over", "under", "again", "further", "then", "once",
+        "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
+        "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own",
+        "same", "so", "than", "too", "very",
+        "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
+        "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her",
+        "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs",
+        "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
+        "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
+        "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
+        "can", "could", "may", "might", "must", "ought"]
     us_dict = enchant.Dict("en_US")
-    return us_dict.check(word)
+    return us_dict.check(word) and word.lower() not in stopwords
 
 def extract_text_from_pdf(pdf_path) -> str:
     pages = convert_from_path(pdf_path)
@@ -34,7 +38,7 @@ def extract_text_from_pdf(pdf_path) -> str:
     return text
 
 def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
-    splited_words = [word.lower() for word in text.split() if len(word) > 2 and not word.isupper() and word not in stopwords and validate_word(word)]
+    splited_words = [word.lower() for word in text.split() if validate_word(word)]
     return list(dict.fromkeys(splited_words))
 
 def save_words_into_csv(words: list[str], year: str) -> None:
@@ -49,4 +53,4 @@ def save_words_into_csv(words: list[str], year: str) -> None:
 pdf = "2012.pdf"
 extracted_text = extract_text_from_pdf(pdf)
 words = parse_and_format_words_from_extracted_text(extracted_text)
-save_words_into_csv(words, "2012")
+save_words_into_csv(words, pdf.split(".")[0])

@@ -17,7 +17,7 @@ def validate_word(word: str) -> bool:
         "same", "so", "than", "too", "very",
         "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
         "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her",
-        "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs",
+        "hers", "herself", "it", "its", "it's", "he's", "she's", "they're", "itself", "they", "them", "their", "theirs",
         "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
         "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
         "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
@@ -39,13 +39,13 @@ def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
     splited_words = [word.lower() for word in text.split() if validate_word(word)]
     return list(dict.fromkeys(splited_words))
 
-def save_words_into_csv(words: list[str], year: str) -> None:
-    with open(f'{year}.csv', 'w') as f:
-        header = ["word", "pos", "year"]
+def save_words_into_csv(words: list[str], source: str) -> None:
+    with open(f'{source}.csv', 'w') as f:
+        header = ["word", "pos", "source"]
         writer = csv.writer(f)
         writer.writerow(header)
         for w in words:
-            writer.writerow([w, "", year])
+            writer.writerow([w, "", source])
 
 
 pdf = "2012.pdf"

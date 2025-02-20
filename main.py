@@ -22,7 +22,7 @@ def validate_word(word: str) -> bool:
         "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
         "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
         "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
-        "can", "could", "may", "might", "must", "ought"]
+        "can", "could", "may", "might", "must", "ought", "'s", "n't", "'re", " "]
     us_dict = enchant.Dict("en_US")
     return us_dict.check(word) and word.lower() not in stopwords
 

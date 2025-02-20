@@ -1,4 +1,4 @@
-import os, csv, pytesseract, enchant
+import os, csv, pytesseract, enchant, spacy
 from pdf2image import convert_from_path
 from PIL import Image
 from tqdm import tqdm
@@ -36,14 +36,19 @@ def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
         page.save(tmp_image, 'JPEG')
         img_string = pytesseract.image_to_string(Image.open(tmp_image))
         words = parse_and_format_words_from_extracted_text(img_string)
-        formated_words = [{"word": w, "pos": "", "source": source, "page": i + 1} for w in words]
+        formated_words = [{"word": w[0], "pos": w[1], "source": source, "page": i + 1} for w in words]
         text.append(formated_words)
         os.remove(tmp_image)
     return text
 
-def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
+def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
     splited_words = [word.lower() for word in text.split() if validate_word(word)]
-    return list(dict.fromkeys(splited_words))
+    cleaned_words = list(dict.fromkeys(splited_words))
+    nlp = spacy.load("en_core_web_sm")
+    print(cleaned_words)
+    doc = nlp(" ".join(cleaned_words))
+    print(doc)
+    return [(token.text, token.pos_) for token in doc]
 
 def save_words_into_csv(word_pages: list[list[dict]], source: str) -> None:
     keys = word_pages[0][0].keys()

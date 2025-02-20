@@ -26,7 +26,7 @@ def validate_word(word: str) -> bool:
     us_dict = enchant.Dict("en_US")
     return us_dict.check(word) and word.lower() not in stopwords
 
-def extract_text_from_pdf(pdf_path: str) -> str:
+def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
     pages = convert_from_path(pdf_path)
     text = []
     pbar = tqdm(enumerate(pages))
@@ -34,7 +34,10 @@ def extract_text_from_pdf(pdf_path: str) -> str:
         pbar.set_description(f"Processing page no. {i+1}")
         tmp_image = f'page_{i}.jpg'
         page.save(tmp_image, 'JPEG')
-        text += pytesseract.image_to_string(Image.open(tmp_image))
+        img_string = pytesseract.image_to_string(Image.open(tmp_image))
+        words = parse_and_format_words_from_extracted_text(img_string)
+        formated_words = [{"word": w, "pos": "", "source": source, "page": i + 1} for w in words]
+        text.append(formated_words)
         os.remove(tmp_image)
     return text
 
@@ -42,16 +45,15 @@ def parse_and_format_words_from_extracted_text(text: str) -> list[str]:
     splited_words = [word.lower() for word in text.split() if validate_word(word)]
     return list(dict.fromkeys(splited_words))
 
-def save_words_into_csv(words: list[str], source: str) -> None:
+def save_words_into_csv(word_pages: list[list[dict]], source: str) -> None:
+    keys = word_pages[0][0].keys()
     with open(f'{source}.csv', 'w') as f:
-        header = ["word", "pos", "source"]
-        writer = csv.writer(f)
-        writer.writerow(header)
-        for w in words:
-            writer.writerow([w, "", source])
+        dict_writer = csv.DictWriter(f, fieldnames=keys)
+        dict_writer.writeheader()
+        for page in tqdm(word_pages):
+            dict_writer.writerows(page)
 
 
-pdf = "2012.pdf"
-extracted_text = extract_text_from_pdf(pdf)
-words = parse_and_format_words_from_extracted_text(extracted_text)
-save_words_into_csv(words, pdf.split(".")[0])
+pdf = "2018R.pdf"
+word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
+save_words_into_csv(word_pages, pdf.split(".")[0])

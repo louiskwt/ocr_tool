@@ -47,7 +47,6 @@ def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
     nlp = spacy.load("en_core_web_sm")
     print(cleaned_words)
     doc = nlp(" ".join(cleaned_words))
-    print(doc)
     return [(token.text, token.pos_) for token in doc]
 
 def save_words_into_csv(word_pages: list[list[dict]], source: str) -> None:

@@ -1,6 +1,7 @@
 import os, csv, pytesseract, enchant
 from pdf2image import convert_from_path
 from PIL import Image
+from tqdm import tqdm
 
 def validate_word(word: str) -> bool:
     if len(word) < 2:
@@ -27,8 +28,10 @@ def validate_word(word: str) -> bool:
 
 def extract_text_from_pdf(pdf_path: str) -> str:
     pages = convert_from_path(pdf_path)
-    text = ""
-    for i, page in enumerate(pages):
+    text = []
+    pbar = tqdm(enumerate(pages))
+    for i, page in pbar: 
+        pbar.set_description(f"Processing page no. {i+1}")
         tmp_image = f'page_{i}.jpg'
         page.save(tmp_image, 'JPEG')
         text += pytesseract.image_to_string(Image.open(tmp_image))

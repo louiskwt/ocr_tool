@@ -2,6 +2,7 @@ import os, csv, pytesseract, enchant, spacy
 from pdf2image import convert_from_path
 from PIL import Image
 from tqdm import tqdm
+from utils import remove_duplicates_by_property
 
 def validate_word(word: str) -> bool:
     if len(word) < 2:
@@ -60,4 +61,5 @@ def save_words_into_csv(word_pages: list[list[dict]], source: str) -> None:
 
 pdf = "2018R.pdf"
 word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
+cleaned_word_pages = [remove_duplicates_by_property(p, "word") for p in word_pages]
 save_words_into_csv(word_pages, pdf.split(".")[0])

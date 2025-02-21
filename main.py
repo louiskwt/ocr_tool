@@ -46,7 +46,6 @@ def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
     splited_words = [word.lower() for word in text.split() if validate_word(word)]
     cleaned_words = list(dict.fromkeys(splited_words))
     nlp = spacy.load("en_core_web_sm")
-    print(cleaned_words)
     doc = nlp(" ".join(cleaned_words))
     return [(token.text, token.pos_) for token in doc]
 

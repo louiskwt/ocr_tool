@@ -49,13 +49,12 @@ def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
     doc = nlp(" ".join(cleaned_words))
     return [(token.text, token.pos_) for token in doc]
 
-def save_words_into_csv(word_pages: list[list[dict]], source: str) -> None:
-    keys = word_pages[0][0].keys()
+def save_words_into_csv(word_pages: list[dict], source: str) -> None:
+    keys = word_pages[0].keys()
     with open(f'{source}.csv', 'w') as f:
         dict_writer = csv.DictWriter(f, fieldnames=keys)
         dict_writer.writeheader()
-        for page in tqdm(word_pages):
-            dict_writer.writerows(page)
+        dict_writer.writerows(word_pages)
 
 
 pdf = "2018R.pdf"

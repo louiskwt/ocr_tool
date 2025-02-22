@@ -35,6 +35,10 @@ def validate_word(word: str) -> bool:
     True
     >>> validate_word("n't")
     False
+    >>> validate_word("iii")
+    False
+    >>> validate_word("moor")
+    True
     """
     if len(word) <= 2:
         return False
@@ -52,6 +56,7 @@ def validate_word(word: str) -> bool:
         "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
         "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
         "having", "do", "does", "did", "doing", "will", "would", "shall", "should",
-        "can", "could", "may", "might", "must", "ought", "’s", "n’t", "'re", " ", "cc", "ca", "'re"]
+        "can", "could", "may", "might", "must", "ought", "’s", "n’t", "'re", " ", 
+        "cc", "ca", "'re", "iii", "anti", "non"]
     us_dict = enchant.Dict("en_US")
     return us_dict.check(word) and word.lower() not in stopwords

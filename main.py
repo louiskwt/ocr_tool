@@ -2,7 +2,7 @@ import os, csv, pytesseract, spacy
 from pdf2image import convert_from_path
 from PIL import Image
 from tqdm import tqdm
-from utils import remove_duplicates_by_property
+from utils import remove_duplicates_by_property, validate_word
 
 def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
     pages = convert_from_path(pdf_path)

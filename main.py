@@ -20,11 +20,11 @@ def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
     return text
 
 def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
-    splited_words = [word.lower() for word in text.split() if validate_word(word)]
+    splited_words = [word.lower() for word in text.split()]
     cleaned_words = list(dict.fromkeys(splited_words))
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(" ".join(cleaned_words))
-    return [(token.text, token.pos_) for token in doc]
+    return [(token.text, token.pos_) for token in doc if validate_word(token.text)]
 
 def save_words_into_csv(word_pages: list[dict], source: str) -> None:
     keys = word_pages[0].keys()

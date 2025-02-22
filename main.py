@@ -9,7 +9,7 @@ def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
     text = []
     pbar = tqdm(enumerate(pages))
     for i, page in pbar: 
-        pbar.set_description(f"Processing page no. {i+1}")
+        pbar.set_description(f"Processing page no. {i+1} / {len(pages)}")
         tmp_image = f'page_{i}.jpg'
         page.save(tmp_image, 'JPEG')
         img_string = pytesseract.image_to_string(Image.open(tmp_image))
@@ -34,8 +34,10 @@ def save_words_into_csv(word_pages: list[dict], source: str) -> None:
         dict_writer.writerows(word_pages)
 
 
-pdf = "2018R.pdf"
-word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
-flattend_word_pages = [d for page in word_pages for d in page]
-cleaned_word_pages = remove_duplicates_by_property(flattend_word_pages, "word")
-save_words_into_csv(cleaned_word_pages, pdf.split(".")[0])
+if __name__ == "__main__":
+    print("Processing started...")
+    pdf = "2018R.pdf"
+    word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
+    flattend_word_pages = [d for page in word_pages for d in page]
+    cleaned_word_pages = remove_duplicates_by_property(flattend_word_pages, "word")
+    save_words_into_csv(cleaned_word_pages, pdf.split(".")[0])

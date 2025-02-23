@@ -1,23 +1,10 @@
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-tokenizer = AutoTokenizer.from_pretrained("t5-base")
-model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+from transformers import pipeline
 
 def sentence_generator(word: str):
-    encoder_input_str = f"Generate a meaningful sentence in English using '{word}'" 
-    input_ids = tokenizer(encoder_input_str, return_tensors="pt").input_ids
-    force_words_ids = tokenizer(word, add_special_tokens=False).input_ids
-    # Convert force_words_ids to a list of lists
-    force_words_ids = [force_words_ids]
-
-    outputs = model.generate(
-        input_ids,
-        force_words_ids=force_words_ids,
-        num_beams=5,
-        num_return_sequences=1,
-        no_repeat_ngram_size=1,
-        remove_invalid_values=True,
-    )
-    print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+    gpt2_generator = pipeline("text-generation", model="gpt2")
+    sentences = gpt2_generator(word, do_sample=True, top_k=50, temperature=0.6, max_length=128, num_return_sequences=3)
+    for sentence in sentences:
+        print(sentence["generated_text"])
+        print("=" * 50)
 
 sentence_generator("answer")

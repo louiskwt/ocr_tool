@@ -19,6 +19,19 @@ def extract_words_from_pdf(pdf_path: str, source: str) -> list[list[dict]]:
         os.remove(tmp_image)
     return text
 
+def extract_text_from_pdf(pdf_path: str) -> list[str]:
+    pages = convert_from_path(pdf_path)
+    extracted_text = []
+    pbar = tqdm(enumerate(pages))
+    for i, page in pbar:
+        pbar.set_description(f"Extracting page no. {i+1} / {len(pages)}")
+        tmp_image = f'page_{i}.jpg'
+        page.save(tmp_image, 'JPEG')
+        img_string = pytesseract.image_to_string(Image.open(tmp_image), "eng")
+        extracted_text.append(img_string)
+        os.remove(tmp_image)
+    return extracted_text
+
 def parse_and_format_words_from_extracted_text(text: str) -> list[tuple]:
     splited_words = [word.lower() for word in text.split()]
     cleaned_words = list(dict.fromkeys(splited_words))

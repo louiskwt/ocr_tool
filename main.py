@@ -51,7 +51,9 @@ def save_words_into_csv(word_pages: list[dict], source: str) -> None:
 if __name__ == "__main__":
     print("Processing started...")
     pdf = "2018R.pdf"
-    word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
-    flattend_word_pages = [d for page in word_pages for d in page]
-    cleaned_word_pages = remove_duplicates_by_property(flattend_word_pages, "word")
-    save_words_into_csv(cleaned_word_pages, pdf.split(".")[0])
+    text = extract_text_from_pdf(pdf)
+    print(text)
+    # word_pages = extract_words_from_pdf(pdf, source=pdf.split(".")[0])
+    # flattend_word_pages = [d for page in word_pages for d in page]
+    # cleaned_word_pages = remove_duplicates_by_property(flattend_word_pages, "word")
+    # save_words_into_csv(cleaned_word_pages, pdf.split(".")[0])

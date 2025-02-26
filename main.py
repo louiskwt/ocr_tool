@@ -28,7 +28,8 @@ def extract_text_from_pdf(pdf_path: str) -> list[str]:
         tmp_image = f'page_{i}.jpg'
         page.save(tmp_image, 'JPEG')
         img_string = pytesseract.image_to_string(Image.open(tmp_image), "eng")
-        extracted_text.append(img_string)
+        cleaned_img_string = " ".join([word for word in img_string.split() if validate_word(word)])
+        extracted_text.append(cleaned_img_string)
         os.remove(tmp_image)
     return extracted_text
 

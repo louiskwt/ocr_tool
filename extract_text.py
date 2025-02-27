@@ -14,7 +14,7 @@ def extract_text_from_pdf(pdf_path: str) -> list[str]:
         page.save(tmp_image, 'JPEG')
         img_string = pytesseract.image_to_string(Image.open(tmp_image), "eng")
         splited_string = img_string.split("\n")
-        cleaned_img_string = "\n".join([sentence for sentence in splited_string if len(sentence) > 0])
+        cleaned_img_string = "\n".join([sentence for sentence in splited_string if len(sentence) > 0 and sentence.isdigit() != True])
         extracted_text.append(cleaned_img_string)
         os.remove(tmp_image)
     return extracted_text
